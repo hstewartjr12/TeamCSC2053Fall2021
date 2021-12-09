@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -12,10 +13,9 @@ import java.util.LinkedList;
 
 public class NumbersDetailActivity extends AppCompatActivity {
     private final LinkedList<String> mNumbers = new LinkedList<>();
-    private final LinkedList<String> mNumberFacts = new LinkedList<>();
+    private LinkedList<String> mNumberFacts = new LinkedList<>();
     private RecyclerView mRecyclerView;
     private NumbersAdapter mAdapter;
-    private TextView mFact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +30,12 @@ public class NumbersDetailActivity extends AppCompatActivity {
             mNumbers.add(number + "");
         }
 
-
-        // THIS IS WHERE YOU ADD THE FACTS
-        for (int number = limit1; number <= limit2; number++) {
-            String queryString = number + "?json";
-            GetNums gn = new GetNums(mFact);
-            gn.execute(queryString);
-            String fact = String.valueOf(mFact);
-            mNumberFacts.add(fact);
-        }
-
+        String queryString = limit1 + ".." + limit2 + "?json";
+        GetNums gn = new GetNums(limit1, limit2, mNumberFacts);
+        gn.execute(queryString);
+        while (gn.getmFact().size() == 0){
+        Log.d("Check", gn.getmFact().toString());}
+        mNumberFacts = gn.getmFact();
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
